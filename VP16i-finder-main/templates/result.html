@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>result</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_result.css') }}">
+</head>
+
+
+<body>
+
+    <div class = "header">
+        <h2>VP16i-finder</h2>
+
+        <div class="topnav">
+            <a href="/">Home</a>
+            <a href="/upload">Upload</a>
+            <a href="/tutorial">Tutorials</a>
+        </div>
+    </div>
+    <hr>
+
+    <h1>Results</h1>
+
+    <div class = "content">
+        <div class="buttons">
+            <a href = "/upload" class="btn">Back</a>
+            <button class="btn" onclick="downloadCSV()">Download CSV</button>
+          </div>
+        
+          <div class = "table_container">
+              <table id = "dataTable">
+                  <tr>
+                      <th>Compound SMILE</th>
+                      <th>Activity</th>
+                      <th>Confidence Level</th>
+                  </tr>
+                  <tr>
+                      <td class = "truncate">{{smile}}</td>
+                      <td>{{activity}}</td>
+                      <td>{{confidence}}</td>
+                  </tr>
+              </table>
+          </div>
+      
+          <div class = "image">
+              <!--<img src="data:image/png;base64,{{ img_data }}" alt="2D Structure">-->
+              <img src="{{ url_for('static', filename='Image/mol_image.png') }}">
+      
+          </div>
+    </div>
+
+
+    <script>
+        function downloadCSV() {
+           var table = document.getElementById('dataTable');
+
+           // Generate CSV content
+            var csvContent = [];
+            var rows = table.querySelectorAll('tr');
+
+            rows.forEach(function (row) {
+                var rowData = [];
+                var cols = row.children;
+
+                for (var i = 0; i < cols.length; i++) {
+                    rowData.push(cols[i].innerText);
+                }
+
+                csvContent.push(rowData.join(','));
+            });
+
+            var csvData = csvContent.join('\n');
+
+            // Create a Blob object and initiate the download
+            var blob = new Blob([csvData], { type: 'text/csv' });
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'result.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
